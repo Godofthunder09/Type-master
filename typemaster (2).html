@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TypeMaster — Professional Typing Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#0a0b0f;--bg2:#10121a;--bg3:#181c28;--border:#1e2235;
+  --accent:#00e5ff;--accent2:#ff6b6b;--correct:#a8ff78;--wrong:#ff6b6b;
+  --text:#e8eaf0;--text2:#7a7f9a;--text3:#3a3f58;--gold:#ffd700;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,229,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,229,255,0.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;z-index:0;}
+nav{position:sticky;top:0;z-index:100;background:rgba(10,11,15,0.95);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:60px;}
+.nav-logo{font-size:1.3rem;font-weight:800;letter-spacing:-0.5px;display:flex;align-items:center;gap:8px;}
+.nav-logo span{color:var(--accent);}
+.nav-logo .dot{width:8px;height:8px;background:var(--accent);border-radius:50%;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.5;transform:scale(0.8);}}
+.nav-links{display:flex;gap:0.2rem;list-style:none;}
+.nav-links a{text-decoration:none;color:var(--text2);font-size:0.78rem;font-weight:600;letter-spacing:0.5px;text-transform:uppercase;padding:6px 11px;border-radius:6px;transition:all 0.2s;cursor:pointer;}
+.nav-links a:hover,.nav-links a.active{color:var(--accent);background:rgba(0,229,255,0.08);}
+.mobile-nav-toggle{display:none;background:none;border:1px solid var(--border);color:var(--text);padding:6px 10px;border-radius:6px;cursor:pointer;font-size:1.1rem;}
+@media(max-width:900px){.mobile-nav-toggle{display:block;}.nav-links{display:none;}.nav-links.open{display:flex;flex-direction:column;position:absolute;top:60px;left:0;right:0;background:var(--bg);border-bottom:1px solid var(--border);padding:1rem;gap:0.3rem;z-index:99;}}
+.page{display:none;padding:2rem;max-width:1000px;margin:0 auto;position:relative;z-index:1;}
+.page.active{display:block;animation:fadeIn 0.3s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+.page-header{margin-bottom:2rem;padding-bottom:1.5rem;border-bottom:1px solid var(--border);}
+.page-header h1{font-size:2rem;font-weight:800;letter-spacing:-1px;margin-bottom:0.4rem;}
+.page-header h1 .hl{color:var(--accent);}
+.page-header p{color:var(--text2);font-size:0.9rem;font-family:'JetBrains Mono',monospace;}
+
+.quote-banner{background:linear-gradient(135deg,rgba(0,229,255,0.06),rgba(0,229,255,0.02));border:1px solid rgba(0,229,255,0.15);border-radius:10px;padding:0.9rem 1.4rem;margin-bottom:1.8rem;display:flex;align-items:center;gap:12px;}
+.quote-icon{font-size:1.2rem;flex-shrink:0;}
+.quote-text{font-size:0.85rem;color:var(--text2);font-style:italic;line-height:1.5;}
+.quote-text span{color:var(--accent);font-style:normal;font-weight:700;}
+
+.test-controls{display:flex;gap:0.8rem;margin-bottom:1.5rem;flex-wrap:wrap;align-items:center;}
+.ctrl-group{display:flex;background:var(--bg2);border:1px solid var(--border);border-radius:8px;overflow:hidden;}
+.ctrl-btn{padding:8px 14px;background:none;border:none;color:var(--text2);font-family:'JetBrains Mono',monospace;font-size:0.78rem;cursor:pointer;transition:all 0.15s;border-right:1px solid var(--border);}
+.ctrl-btn:last-child{border-right:none;}
+.ctrl-btn:hover,.ctrl-btn.active{background:rgba(0,229,255,0.1);color:var(--accent);}
+.lang-select{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:0.78rem;cursor:pointer;outline:none;}
+.mode-badge{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:6px;font-size:0.72rem;font-family:'JetBrains Mono',monospace;font-weight:700;border:1px solid;cursor:pointer;transition:all 0.2s;}
+.mode-badge.blind{background:rgba(255,107,107,0.08);color:var(--accent2);border-color:rgba(255,107,107,0.2);}
+.mode-badge.blind.on{background:rgba(255,107,107,0.2);border-color:var(--accent2);}
+.mode-badge.sudden{background:rgba(255,215,0,0.08);color:var(--gold);border-color:rgba(255,215,0,0.2);}
+.mode-badge.sudden.on{background:rgba(255,215,0,0.2);border-color:var(--gold);}
+.mode-badge.rhythm{background:rgba(168,255,120,0.08);color:var(--correct);border-color:rgba(168,255,120,0.2);}
+.mode-badge.rhythm.on{background:rgba(168,255,120,0.2);border-color:var(--correct);}
+.rhythm-controls{display:none;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:0.6rem 1rem;margin-bottom:1rem;align-items:center;gap:1rem;}
+.rhythm-controls.show{display:flex;}
+.rhythm-bpm{display:flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:0.8rem;color:var(--text2);}
+.rhythm-bpm input{width:60px;background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:4px 8px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:0.8rem;outline:none;}
+.beat-btns{display:flex;gap:6px;}
+.beat-btn{padding:4px 12px;background:var(--bg3);border:1px solid var(--border);border-radius:4px;color:var(--text2);font-family:'JetBrains Mono',monospace;font-size:0.75rem;cursor:pointer;transition:all 0.15s;}
+.beat-btn.active{background:rgba(168,255,120,0.15);color:var(--correct);border-color:rgba(168,255,120,0.4);}
+.test-stats-bar{display:flex;gap:2rem;margin-bottom:1.2rem;flex-wrap:wrap;}
+.stat-box{display:flex;flex-direction:column;gap:2px;}
+.stat-label{font-size:0.7rem;text-transform:uppercase;letter-spacing:1px;color:var(--text3);font-family:'JetBrains Mono',monospace;}
+.stat-value{font-size:1.8rem;font-weight:800;color:var(--accent);font-family:'JetBrains Mono',monospace;line-height:1;}
+.stat-value.timer-warn{color:var(--accent2);}
+
+.wpm-graph-container{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:0.8rem 1rem;margin-bottom:1rem;display:none;}
+.wpm-graph-container.show{display:block;}
+.wpm-graph-title{font-size:0.7rem;color:var(--text3);font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;}
+#live-wpm-canvas{width:100%;height:60px;display:block;}
+
+.typing-wrapper{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:2rem;margin-bottom:1rem;cursor:text;}
+.typing-wrapper:focus-within{border-color:rgba(0,229,255,0.3);box-shadow:0 0 0 3px rgba(0,229,255,0.05);}
+.typing-wrapper.blind-mode #text-display .char.correct{color:var(--text3) !important;background:none !important;}
+.typing-wrapper.blind-mode #text-display .char.wrong{color:var(--text3) !important;background:none !important;}
+.typing-wrapper.sudden-mode{border-color:rgba(255,215,0,0.2);}
+#text-display{font-family:'JetBrains Mono',monospace;font-size:1.1rem;line-height:2.2;word-wrap:break-word;overflow-wrap:break-word;white-space:pre-wrap;width:100%;max-height:198px;overflow:hidden;color:var(--text3);}
+#text-display .char{position:relative;}
+#text-display .char.correct{color:var(--correct);}
+#text-display .char.wrong{color:var(--wrong);background:rgba(255,107,107,0.15);border-radius:2px;}
+#text-display .char.current{color:var(--text);}
+#text-display .char.current::after{content:'';position:absolute;left:0;top:2px;bottom:2px;width:2px;background:var(--accent);animation:blink 1s infinite;border-radius:2px;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0;}}
+#typing-input{position:absolute;opacity:0;width:1px;height:1px;pointer-events:none;}
+.test-hint{text-align:center;color:var(--text3);font-size:0.8rem;font-family:'JetBrains Mono',monospace;margin-top:0.8rem;}
+.test-hint span{color:var(--accent);}
+.sudden-death-bar{height:3px;background:var(--border);border-radius:2px;margin-bottom:1rem;overflow:hidden;display:none;}
+.sudden-death-bar.show{display:block;}
+.sudden-death-fill{height:100%;background:linear-gradient(90deg,var(--correct),var(--gold),var(--wrong));border-radius:2px;transition:width 0.1s;}
+
+.reaction-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.92);backdrop-filter:blur(12px);z-index:250;flex-direction:column;align-items:center;justify-content:center;gap:1.5rem;}
+.reaction-overlay.show{display:flex;}
+.reaction-word{font-family:'JetBrains Mono',monospace;font-size:4rem;font-weight:800;color:var(--accent);letter-spacing:0.1em;animation:wordFlash 0.3s ease;}
+@keyframes wordFlash{from{opacity:0;transform:scale(0.8);}to{opacity:1;transform:scale(1);}}
+.reaction-word.hidden{opacity:0;}
+.reaction-input{width:400px;max-width:90vw;background:var(--bg2);border:2px solid var(--border);border-radius:10px;padding:14px 20px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:1.2rem;text-align:center;outline:none;}
+.reaction-input:focus{border-color:var(--accent);}
+.reaction-stats{display:flex;gap:2rem;}
+.reaction-hint{font-size:0.85rem;color:var(--text2);font-family:'JetBrains Mono',monospace;}
+
+.results-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.88);backdrop-filter:blur(12px);z-index:200;align-items:center;justify-content:center;}
+.results-overlay.show{display:flex;animation:fadeIn 0.3s ease;}
+.results-card{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:2.5rem;width:520px;max-width:92vw;}
+.results-card h2{font-size:1.5rem;font-weight:800;margin-bottom:0.5rem;}
+.results-quote{font-size:0.82rem;color:var(--accent);font-style:italic;margin-bottom:1.5rem;padding:0.6rem 1rem;background:rgba(0,229,255,0.05);border-left:2px solid var(--accent);border-radius:0 6px 6px 0;}
+.results-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem;}
+.result-item{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:1rem;}
+.result-item .r-label{font-size:0.7rem;text-transform:uppercase;letter-spacing:1px;color:var(--text2);margin-bottom:4px;font-family:'JetBrains Mono',monospace;}
+.result-item .r-value{font-size:2rem;font-weight:800;color:var(--accent);font-family:'JetBrains Mono',monospace;line-height:1;}
+.result-item .r-value.green{color:var(--correct);}
+.result-item .r-value.red{color:var(--wrong);}
+.btn-primary{width:100%;padding:12px;background:var(--accent);color:var(--bg);border:none;border-radius:8px;font-family:'Syne',sans-serif;font-size:0.9rem;font-weight:700;cursor:pointer;transition:all 0.2s;}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,229,255,0.3);}
+.btn-secondary{padding:10px 20px;background:transparent;color:var(--text2);border:1px solid var(--border);border-radius:8px;font-family:'Syne',sans-serif;font-size:0.85rem;font-weight:600;cursor:pointer;transition:all 0.2s;}
+.btn-secondary:hover{border-color:var(--accent);color:var(--accent);}
+
+.lessons-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem;}
+.lesson-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:1.5rem;cursor:pointer;transition:all 0.2s;position:relative;overflow:hidden;}
+.lesson-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--accent);transform:scaleX(0);transition:transform 0.2s;transform-origin:left;}
+.lesson-card:hover{border-color:rgba(0,229,255,0.3);transform:translateY(-2px);}
+.lesson-card:hover::before{transform:scaleX(1);}
+.lesson-card.completed{border-color:rgba(168,255,120,0.3);}
+.lesson-card.completed::before{background:var(--correct);transform:scaleX(1);}
+.lesson-num{font-size:0.7rem;color:var(--text3);font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;}
+.lesson-title{font-size:1rem;font-weight:700;margin-bottom:6px;}
+.lesson-desc{font-size:0.82rem;color:var(--text2);line-height:1.5;margin-bottom:1rem;}
+.lesson-keys{display:flex;gap:4px;flex-wrap:wrap;}
+.key-tag{background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:2px 8px;font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:var(--accent);}
+.lesson-badge{position:absolute;top:1rem;right:1rem;font-size:0.7rem;padding:2px 8px;border-radius:20px;font-weight:600;font-family:'JetBrains Mono',monospace;}
+.badge-done{background:rgba(168,255,120,0.1);color:var(--correct);border:1px solid rgba(168,255,120,0.3);}
+.badge-new{background:rgba(0,229,255,0.1);color:var(--accent);border:1px solid rgba(0,229,255,0.3);}
+
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.92);backdrop-filter:blur(12px);z-index:300;align-items:center;justify-content:center;}
+.modal-overlay.show{display:flex;animation:fadeIn 0.3s ease;}
+.modal-box{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:2rem;width:800px;max-width:95vw;max-height:90vh;overflow-y:auto;}
+.modal-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.2rem;padding-bottom:1rem;border-bottom:1px solid var(--border);}
+.modal-close{background:none;border:1px solid var(--border);color:var(--text2);width:32px;height:32px;border-radius:6px;cursor:pointer;font-size:1rem;transition:all 0.2s;flex-shrink:0;}
+.modal-close:hover{color:var(--accent2);border-color:var(--accent2);}
+.lesson-instructions{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:0.9rem 1.2rem;margin-bottom:1rem;font-size:0.85rem;color:var(--text2);line-height:1.7;}
+.lesson-instructions strong{color:var(--accent);font-weight:600;}
+.lesson-typing-wrapper{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:1rem;cursor:text;}
+.lesson-typing-wrapper:focus-within{border-color:rgba(0,229,255,0.3);box-shadow:0 0 0 3px rgba(0,229,255,0.05);}
+#lesson-text-display{font-family:'JetBrains Mono',monospace;font-size:1rem;line-height:2.2;word-wrap:break-word;overflow-wrap:break-word;white-space:pre-wrap;width:100%;max-height:180px;overflow:hidden;color:var(--text3);}
+#lesson-text-display .char{position:relative;}
+#lesson-text-display .char.correct{color:var(--correct);}
+#lesson-text-display .char.wrong{color:var(--wrong);background:rgba(255,107,107,0.15);border-radius:2px;}
+#lesson-text-display .char.current{color:var(--text);}
+#lesson-text-display .char.current::after{content:'';position:absolute;left:0;top:2px;bottom:2px;width:2px;background:var(--accent);animation:blink 1s infinite;border-radius:2px;}
+.lesson-progress-bar{background:var(--bg3);border-radius:4px;height:4px;margin-bottom:1rem;overflow:hidden;border:1px solid var(--border);}
+.lesson-progress-fill{height:100%;background:var(--accent);border-radius:4px;transition:width 0.3s;}
+
+.games-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1.2rem;margin-bottom:2rem;}
+.game-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:1.5rem;cursor:pointer;transition:all 0.25s;text-align:center;}
+.game-card:hover{transform:translateY(-4px);border-color:rgba(0,229,255,0.3);box-shadow:0 12px 30px rgba(0,0,0,0.4);}
+.game-icon{font-size:2.5rem;margin-bottom:0.8rem;}
+.game-title{font-size:1rem;font-weight:800;margin-bottom:0.4rem;}
+.game-desc{font-size:0.8rem;color:var(--text2);line-height:1.5;margin-bottom:1rem;}
+.game-difficulty{display:inline-block;padding:3px 10px;border-radius:20px;font-size:0.72rem;font-weight:600;font-family:'JetBrains Mono',monospace;}
+.diff-easy{background:rgba(168,255,120,0.1);color:var(--correct);border:1px solid rgba(168,255,120,0.3);}
+.diff-medium{background:rgba(255,215,0,0.1);color:var(--gold);border:1px solid rgba(255,215,0,0.2);}
+.diff-hard{background:rgba(255,107,107,0.1);color:var(--accent2);border:1px solid rgba(255,107,107,0.3);}
+#game-area{display:none;background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:1.5rem;}
+#game-area.show{display:block;animation:fadeIn 0.3s;}
+.game-header-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.2rem;padding-bottom:1rem;border-bottom:1px solid var(--border);}
+#falling-canvas{width:100%;height:300px;background:var(--bg3);border-radius:8px;position:relative;overflow:hidden;margin-bottom:1rem;}
+.falling-word{position:absolute;font-family:'JetBrains Mono',monospace;font-size:0.9rem;color:var(--accent);font-weight:500;padding:4px 10px;background:rgba(0,229,255,0.08);border:1px solid rgba(0,229,255,0.2);border-radius:4px;white-space:nowrap;}
+.falling-word.typed{color:var(--correct);border-color:rgba(168,255,120,0.4);background:rgba(168,255,120,0.1);}
+.falling-word.missed{color:var(--wrong);}
+#game-word-display{display:none;width:100%;height:240px;background:var(--bg3);border-radius:8px;align-items:center;justify-content:center;flex-direction:column;gap:0.8rem;margin-bottom:1rem;border:1px solid var(--border);}
+#game-word-display.show{display:flex;}
+.game-current-word{font-family:'JetBrains Mono',monospace;font-size:3rem;font-weight:700;color:var(--accent);letter-spacing:0.1em;}
+.game-word-hint{font-family:'JetBrains Mono',monospace;font-size:0.82rem;color:var(--text2);}
+#game-input{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:12px 16px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:1rem;outline:none;transition:border-color 0.15s;}
+#game-input:focus{border-color:var(--accent);}
+#game-input.correct-flash{border-color:var(--correct) !important;background:rgba(168,255,120,0.06);}
+#game-input.wrong-flash{border-color:var(--wrong) !important;background:rgba(255,107,107,0.06);}
+
+.stats-overview{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:2rem;}
+@media(max-width:600px){.stats-overview{grid-template-columns:repeat(2,1fr);}}
+.stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:1.5rem;text-align:center;}
+.stat-card .sc-icon{font-size:1.5rem;margin-bottom:0.5rem;}
+.stat-card .sc-value{font-size:2rem;font-weight:800;color:var(--accent);font-family:'JetBrains Mono',monospace;line-height:1;margin-bottom:4px;}
+.stat-card .sc-label{font-size:0.75rem;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;}
+.stats-section-title{font-size:0.8rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--text3);font-family:'JetBrains Mono',monospace;margin-bottom:1rem;margin-top:2rem;}
+
+.heatmap-wrap{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin-bottom:1.5rem;}
+.heatmap-title{font-size:0.8rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--text3);font-family:'JetBrains Mono',monospace;margin-bottom:1rem;}
+.keyboard{display:flex;flex-direction:column;gap:6px;align-items:center;}
+.kb-row{display:flex;gap:5px;}
+.kb-key{width:38px;height:38px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:0.75rem;font-weight:600;color:var(--text2);background:var(--bg3);border:1px solid var(--border);transition:all 0.3s;position:relative;cursor:default;}
+.kb-key.wide{width:58px;}
+.kb-key.wider{width:78px;}
+.kb-key.widest{width:180px;}
+.kb-key[data-heat="1"]{background:rgba(168,255,120,0.15);border-color:rgba(168,255,120,0.4);color:var(--correct);}
+.kb-key[data-heat="2"]{background:rgba(255,215,0,0.15);border-color:rgba(255,215,0,0.4);color:var(--gold);}
+.kb-key[data-heat="3"]{background:rgba(255,140,0,0.2);border-color:rgba(255,140,0,0.5);color:#ff8c00;}
+.kb-key[data-heat="4"]{background:rgba(255,107,107,0.2);border-color:rgba(255,107,107,0.5);color:var(--wrong);}
+.kb-key[data-heat="5"]{background:rgba(255,50,50,0.35);border-color:rgba(255,50,50,0.7);color:#ff3232;}
+.heatmap-legend{display:flex;align-items:center;gap:1rem;margin-top:1rem;font-family:'JetBrains Mono',monospace;font-size:0.75rem;color:var(--text2);}
+.legend-item{display:flex;align-items:center;gap:5px;}
+.legend-dot{width:12px;height:12px;border-radius:3px;}
+.heatmap-no-data{text-align:center;padding:2rem;color:var(--text3);font-family:'JetBrains Mono',monospace;font-size:0.85rem;}
+
+.history-table{width:100%;border-collapse:collapse;font-family:'JetBrains Mono',monospace;font-size:0.85rem;}
+.history-table th{text-align:left;padding:10px 14px;color:var(--text3);font-size:0.72rem;text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--border);}
+.history-table td{padding:12px 14px;border-bottom:1px solid rgba(30,34,53,0.5);color:var(--text2);}
+.history-table td:first-child{color:var(--text);}
+.history-table td.wpm{color:var(--accent);font-weight:600;}
+.history-table td.acc-good{color:var(--correct);}
+.history-table td.acc-bad{color:var(--wrong);}
+.no-stats{text-align:center;padding:3rem;color:var(--text3);font-family:'JetBrains Mono',monospace;font-size:0.9rem;}
+.clear-btn{display:inline-block;margin-top:1rem;padding:8px 16px;background:rgba(255,107,107,0.1);border:1px solid rgba(255,107,107,0.3);color:var(--accent2);border-radius:6px;font-size:0.82rem;font-family:'JetBrains Mono',monospace;cursor:pointer;transition:all 0.2s;}
+.clear-btn:hover{background:rgba(255,107,107,0.2);}
+.wpm-chart{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:1.5rem;height:160px;display:flex;align-items:flex-end;gap:4px;}
+.chart-bar{flex:1;background:var(--accent);opacity:0.6;border-radius:3px 3px 0 0;transition:opacity 0.2s;min-height:4px;}
+.chart-bar:hover{opacity:1;}
+
+.lang-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1rem;margin-bottom:2rem;}
+.lang-card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:1.2rem;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:1rem;}
+.lang-card:hover,.lang-card.active-lang{border-color:rgba(0,229,255,0.4);background:rgba(0,229,255,0.05);}
+.lang-flag{font-size:2rem;}
+.lang-name{font-weight:700;font-size:0.95rem;}
+.lang-subtitle{font-size:0.75rem;color:var(--text2);font-family:'JetBrains Mono',monospace;}
+.lang-preview{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin-top:1.5rem;font-family:'JetBrains Mono',monospace;font-size:0.9rem;color:var(--text2);line-height:1.8;word-wrap:break-word;}
+.lang-preview h3{color:var(--accent);font-size:0.75rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:0.8rem;}
+
+.updates-timeline{position:relative;}
+.updates-timeline::before{content:'';position:absolute;left:10px;top:0;bottom:0;width:1px;background:var(--border);}
+.update-item{padding-left:2.5rem;margin-bottom:2rem;position:relative;}
+.update-dot{position:absolute;left:4px;top:6px;width:13px;height:13px;border-radius:50%;background:var(--accent);border:2px solid var(--bg);}
+.update-dot.minor{background:var(--text3);}
+.update-version{font-family:'JetBrains Mono',monospace;font-size:0.72rem;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;}
+.update-date{font-size:0.75rem;color:var(--text3);font-family:'JetBrains Mono',monospace;margin-bottom:6px;}
+.update-title{font-size:1rem;font-weight:700;margin-bottom:6px;}
+.update-desc{font-size:0.85rem;color:var(--text2);line-height:1.6;}
+.update-tags{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;}
+.update-tag{padding:2px 8px;border-radius:4px;font-size:0.7rem;font-family:'JetBrains Mono',monospace;font-weight:600;}
+.tag-new{background:rgba(0,229,255,0.1);color:var(--accent);border:1px solid rgba(0,229,255,0.2);}
+.tag-fix{background:rgba(168,255,120,0.1);color:var(--correct);border:1px solid rgba(168,255,120,0.2);}
+.tag-improve{background:rgba(255,215,0,0.1);color:var(--gold);border:1px solid rgba(255,215,0,0.2);}
+
+.about-hero{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:2.5rem;margin-bottom:1.5rem;position:relative;overflow:hidden;}
+.about-hero::after{content:'⌨️';position:absolute;right:2rem;top:50%;transform:translateY(-50%);font-size:5rem;opacity:0.07;}
+.about-hero h2{font-size:1.6rem;font-weight:800;margin-bottom:1rem;}
+.about-hero h2 span{color:var(--accent);}
+.about-hero p{color:var(--text2);line-height:1.7;max-width:600px;}
+.about-features{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1rem;}
+.about-feature{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:1.2rem;}
+.about-feature .af-icon{font-size:1.5rem;margin-bottom:0.5rem;}
+.about-feature .af-title{font-weight:700;margin-bottom:4px;}
+.about-feature .af-desc{font-size:0.82rem;color:var(--text2);line-height:1.5;}
+::-webkit-scrollbar{width:6px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+</style>
+</head>
+<body>
+<nav>
+  <div class="nav-logo"><div class="dot"></div>Type<span>Master</span></div>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#" class="active" onclick="showPage('test',this);return false;">Test</a></li>
+    <li><a href="#" onclick="showPage('lessons',this);return false;">Lessons</a></li>
+    <li><a href="#" onclick="showPage('games',this);return false;">Games</a></li>
+    <li><a href="#" onclick="showPage('stats',this);return false;">Stats</a></li>
+    <li><a href="#" onclick="showPage('heatmap',this);return false;">Heatmap</a></li>
+    <li><a href="#" onclick="showPage('languages',this);return false;">Languages</a></li>
+    <li><a href="#" onclick="showPage('updates',this);return false;">Updates</a></li>
+    <li><a href="#" onclick="showPage('about',this);return false;">About</a></li>
+  </ul>
+  <button class="mobile-nav-toggle" onclick="toggleMobileNav()">☰</button>
+</nav>
+
+<div class="page active" id="page-test">
+  <div class="page-header">
+    <h1>Typing <span class="hl">Test</span></h1>
+    <p id="test-page-quote">measure your speed and accuracy in real time</p>
+  </div>
+  <div class="quote-banner" id="quote-banner">
+    <span class="quote-icon">💡</span>
+    <div class="quote-text" id="quote-text"></div>
+  </div>
+  <div class="test-controls">
+    <div class="ctrl-group" id="mode-group">
+      <button class="ctrl-btn active" onclick="setMode('time',this)">Time</button>
+      <button class="ctrl-btn" onclick="setMode('words',this)">Words</button>
+      <button class="ctrl-btn" onclick="setMode('promix',this)">Pro Mix</button>
+    </div>
+    <div class="ctrl-group" id="time-group">
+      <button class="ctrl-btn" onclick="setDuration(15,this)">15s</button>
+      <button class="ctrl-btn active" onclick="setDuration(30,this)">30s</button>
+      <button class="ctrl-btn" onclick="setDuration(60,this)">60s</button>
+      <button class="ctrl-btn" onclick="setDuration(120,this)">120s</button>
+    </div>
+    <div class="ctrl-group" id="word-group" style="display:none">
+      <button class="ctrl-btn active" onclick="setWordCount(25,this)">25</button>
+      <button class="ctrl-btn" onclick="setWordCount(50,this)">50</button>
+      <button class="ctrl-btn" onclick="setWordCount(100,this)">100</button>
+    </div>
+    <select class="lang-select" onchange="setTestLanguage(this.value)" id="test-lang-select">
+      <option value="english">🇬🇧 English</option>
+      <option value="hindi">🇮🇳 Hindi (Roman)</option>
+      <option value="marathi">🟠 Marathi</option>
+      <option value="french">🇫🇷 French</option>
+      <option value="spanish">🇪🇸 Spanish</option>
+      <option value="code">💻 Code</option>
+      <option value="numbers">🔢 Numbers</option>
+    </select>
+    <span class="mode-badge blind" id="blind-badge" onclick="toggleBlind()">👁 Blind</span>
+    <span class="mode-badge sudden" id="sudden-badge" onclick="toggleSudden()">💀 Sudden</span>
+    <span class="mode-badge rhythm" id="rhythm-badge" onclick="toggleRhythm()">🎵 Rhythm</span>
+    <button class="btn-secondary" onclick="resetTest()">↺ Reset</button>
+    <button class="btn-secondary" onclick="startReactionMode()">⚡ Reaction</button>
+  </div>
+  <div class="rhythm-controls" id="rhythm-controls">
+    <div class="rhythm-bpm">BPM: <input type="number" id="bpm-input" value="80" min="40" max="200"></div>
+    <div class="beat-btns">
+      <button class="beat-btn active" onclick="setBeat('drum',this)">🥁 Drum</button>
+      <button class="beat-btn" onclick="setBeat('piano',this)">🎹 Piano</button>
+      <button class="beat-btn" onclick="setBeat('electronic',this)">⚡ Electronic</button>
+    </div>
+  </div>
+  <div class="sudden-death-bar" id="sudden-bar"><div class="sudden-death-fill" id="sudden-fill" style="width:100%"></div></div>
+  <div class="test-stats-bar">
+    <div class="stat-box"><span class="stat-label">WPM</span><span class="stat-value" id="live-wpm">0</span></div>
+    <div class="stat-box"><span class="stat-label">Accuracy</span><span class="stat-value" id="live-acc">100%</span></div>
+    <div class="stat-box"><span class="stat-label">Time</span><span class="stat-value" id="live-timer">30s</span></div>
+    <div class="stat-box"><span class="stat-label">Errors</span><span class="stat-value" id="live-errors">0</span></div>
+  </div>
+  <div class="wpm-graph-container" id="wpm-graph-container">
+    <div class="wpm-graph-title">Live WPM Graph</div>
+    <canvas id="live-wpm-canvas" height="60"></canvas>
+  </div>
+  <div class="typing-wrapper" id="typing-wrapper" onclick="focusInput()">
+    <div id="text-display"></div>
+    <input type="text" id="typing-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+  </div>
+  <div class="test-hint">Click text or press <span>any key</span> to start &nbsp;•&nbsp; <span>Enter</span> to restart &nbsp;•&nbsp; <span>Esc</span> to cancel modes</div>
+</div>
+
+<div class="results-overlay" id="results-overlay">
+  <div class="results-card">
+    <h2>🏁 Test Complete!</h2>
+    <div class="results-quote" id="results-quote"></div>
+    <div class="results-grid">
+      <div class="result-item"><div class="r-label">WPM</div><div class="r-value" id="res-wpm">0</div></div>
+      <div class="result-item"><div class="r-label">Accuracy</div><div class="r-value green" id="res-acc">0%</div></div>
+      <div class="result-item"><div class="r-label">Correct Words</div><div class="r-value green" id="res-correct">0</div></div>
+      <div class="result-item"><div class="r-label">Errors</div><div class="r-value red" id="res-errors">0</div></div>
+    </div>
+    <button class="btn-primary" onclick="closeResults()">↺ Try Again (Enter)</button>
+  </div>
+</div>
+
+<div class="reaction-overlay" id="reaction-overlay">
+  <div class="reaction-stats">
+    <div class="stat-box"><span class="stat-label">Score</span><span class="stat-value" id="reaction-score">0</span></div>
+    <div class="stat-box"><span class="stat-label">Round</span><span class="stat-value" id="reaction-round">0</span></div>
+    <div class="stat-box"><span class="stat-label">Misses</span><span class="stat-value" id="reaction-misses">0</span></div>
+  </div>
+  <div class="reaction-word" id="reaction-word"></div>
+  <input type="text" class="reaction-input" id="reaction-input" placeholder="Type the word from memory..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+  <div class="reaction-hint" id="reaction-hint">Memorise the word above — it will disappear!</div>
+  <button class="btn-secondary" onclick="stopReaction()">✕ Exit</button>
+</div>
+
+<div class="page" id="page-lessons">
+  <div class="page-header">
+    <h1>Typing <span class="hl">Lessons</span></h1>
+    <p> click any lesson card to open and start practicing</p>
+  </div>
+  <div class="quote-banner"><span class="quote-icon">💡</span><div class="quote-text" id="lessons-quote"></div></div>
+  <div class="lessons-grid" id="lessons-grid"></div>
+</div>
+
+<div class="modal-overlay" id="lesson-modal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div>
+        <div class="lesson-num" id="modal-lesson-num">LESSON 1 OF 8</div>
+        <div style="font-size:1.2rem;font-weight:800;margin-top:4px;" id="modal-lesson-title">Home Row Keys</div>
+      </div>
+      <button class="modal-close" onclick="closeLessonModal()">✕</button>
+    </div>
+    <div class="lesson-instructions" id="lesson-instructions"></div>
+    <div class="test-stats-bar" style="margin-bottom:0.8rem">
+      <div class="stat-box"><span class="stat-label">WPM</span><span class="stat-value" id="lesson-wpm">0</span></div>
+      <div class="stat-box"><span class="stat-label">Accuracy</span><span class="stat-value" id="lesson-acc">100%</span></div>
+      <div class="stat-box"><span class="stat-label">Progress</span><span class="stat-value" id="lesson-progress">0%</span></div>
+    </div>
+    <div class="lesson-progress-bar"><div class="lesson-progress-fill" id="lesson-progress-fill" style="width:0%"></div></div>
+    <div class="lesson-typing-wrapper" onclick="focusLessonInput()">
+      <div id="lesson-text-display"></div>
+      <input type="text" id="lesson-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" style="position:absolute;opacity:0;width:1px;height:1px;">
+    </div>
+    <div class="test-hint">Click above and start typing &nbsp;•&nbsp; <span>Esc</span> to close</div>
+  </div>
+</div>
+
+<div class="page" id="page-games">
+  <div class="page-header">
+    <h1>Typing <span class="hl">Games</span></h1>
+    <p> build speed through fun challenges</p>
+  </div>
+  <div class="quote-banner"><span class="quote-icon">💡</span><div class="quote-text" id="games-quote"></div></div>
+  <div class="games-grid" id="games-grid">
+    <div class="game-card" onclick="startGame('falling')"><div class="game-icon">🌧️</div><div class="game-title">Word Rain</div><div class="game-desc">Words fall from the sky. Type them before they hit the bottom or lose a life!</div><span class="game-difficulty diff-easy">Easy</span></div>
+    <div class="game-card" onclick="startGame('speedrush')"><div class="game-icon">⚡</div><div class="game-title">Speed Rush</div><div class="game-desc">A word appears on screen. Type it and press Space or Enter. Score as many as possible in 30 seconds!</div><span class="game-difficulty diff-medium">Medium</span></div>
+    <div class="game-card" onclick="startGame('accuracy')"><div class="game-icon">🎯</div><div class="game-title">Precision Strike</div><div class="game-desc">Type each word perfectly then press Space or Enter. One mistake resets your streak!</div><span class="game-difficulty diff-hard">Hard</span></div>
+  </div>
+  <div id="game-area">
+    <div class="game-header-bar">
+      <div style="display:flex;gap:1.5rem">
+        <div class="stat-box"><span class="stat-label">Score</span><span class="stat-value" id="game-score">0</span></div>
+        <div class="stat-box"><span class="stat-label" id="game-stat2-label">Lives</span><span class="stat-value" id="game-stat2">❤️❤️❤️</span></div>
+        <div class="stat-box"><span class="stat-label">Time</span><span class="stat-value" id="game-timer">--</span></div>
+      </div>
+      <button class="btn-secondary" onclick="stopGame()">✕ Exit</button>
+    </div>
+    <div id="falling-canvas"></div>
+    <div id="game-word-display"><div class="game-current-word" id="game-current-word">---</div><div class="game-word-hint" id="game-word-hint">Type the word above then press Space or Enter</div></div>
+    <input type="text" id="game-input" placeholder="Type here..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+  </div>
+</div>
+
+<div class="page" id="page-stats">
+  <div class="page-header">
+    <h1>Your <span class="hl">Stats</span></h1>
+    <p> all data stored locally in your browser — no account needed</p>
+  </div>
+  <div class="stats-overview" id="stats-overview"></div>
+  <div class="stats-section-title">WPM History (last 20 tests)</div>
+  <div class="wpm-chart" id="wpm-chart"></div>
+  <div class="stats-section-title">Recent Tests</div>
+  <div id="stats-history"></div>
+</div>
+
+<div class="page" id="page-heatmap">
+  <div class="page-header">
+    <h1>Keyboard <span class="hl">Heatmap</span></h1>
+    <p> see which keys you struggle with most — fix your weak spots</p>
+  </div>
+  <div class="quote-banner"><span class="quote-icon">💡</span><div class="quote-text" id="heatmap-quote"></div></div>
+  <div class="heatmap-wrap">
+    <div class="heatmap-title">Error Frequency by Key</div>
+    <div id="heatmap-content"></div>
+    <div class="heatmap-legend">
+      <span style="color:var(--text2)">Errors:</span>
+      <div class="legend-item"><div class="legend-dot" style="background:rgba(168,255,120,0.4)"></div><span>Low</span></div>
+      <div class="legend-item"><div class="legend-dot" style="background:rgba(255,215,0,0.5)"></div><span>Medium</span></div>
+      <div class="legend-item"><div class="legend-dot" style="background:rgba(255,140,0,0.5)"></div><span>High</span></div>
+      <div class="legend-item"><div class="legend-dot" style="background:rgba(255,50,50,0.6)"></div><span>Critical</span></div>
+    </div>
+  </div>
+  <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:1.5rem;">
+    <div class="heatmap-title">Top Weak Keys</div>
+    <div id="weak-keys-list"></div>
+  </div>
+</div>
+
+<div class="page" id="page-languages">
+  <div class="page-header">
+    <h1>Typing <span class="hl">Languages</span></h1>
+    <p> select your preferred language — syncs with the Test page</p>
+  </div>
+  <div class="lang-grid">
+    <div class="lang-card active-lang" onclick="selectLanguage('english',this)"><span class="lang-flag">🇬🇧</span><div><div class="lang-name">English</div><div class="lang-subtitle">Common words</div></div></div>
+    <div class="lang-card" onclick="selectLanguage('hindi',this)"><span class="lang-flag">🇮🇳</span><div><div class="lang-name">Hindi (Roman)</div><div class="lang-subtitle">Romanized Hindi</div></div></div>
+    <div class="lang-card" onclick="selectLanguage('marathi',this)"><span class="lang-flag">🟠</span><div><div class="lang-name">Marathi (Roman)</div><div class="lang-subtitle">Romanized Marathi</div></div></div>
+    <div class="lang-card" onclick="selectLanguage('french',this)"><span class="lang-flag">🇫🇷</span><div><div class="lang-name">French</div><div class="lang-subtitle">French vocabulary</div></div></div>
+    <div class="lang-card" onclick="selectLanguage('spanish',this)"><span class="lang-flag">🇪🇸</span><div><div class="lang-name">Spanish</div><div class="lang-subtitle">Spanish vocabulary</div></div></div>
+    <div class="lang-card" onclick="selectLanguage('code',this)"><span class="lang-flag">💻</span><div><div class="lang-name">Code Snippets</div><div class="lang-subtitle">Python / JS keywords</div></div></div>
+    <div class="lang-card" onclick="selectLanguage('numbers',this)"><span class="lang-flag">🔢</span><div><div class="lang-name">Numbers</div><div class="lang-subtitle">Numeric typing</div></div></div>
+  </div>
+  <div class="lang-preview"><h3>Sample — <span id="lang-preview-name">English</span></h3><div id="lang-preview-text"></div></div>
+</div>
+
+<div class="page" id="page-updates">
+  <div class="page-header"><h1>Release <span class="hl">Notes</span></h1><p> what's new in TypeMaster? </p></div>
+  <div class="updates-timeline">
+    <div class="update-item"><div class="update-dot"></div><div class="update-version">v2.0.0</div><div class="update-date">March 2026</div><div class="update-title">Massive Feature Update 🚀</div><div class="update-desc">Keyboard Heatmap to track your weak keys. Pro Mix mode combining words, numbers and symbols. Blind Mode, Sudden Death, Live WPM Graph, Reaction Mode and Rhythm Mode with 3 beat styles. Motivational quotes throughout the app.</div><div class="update-tags"><span class="update-tag tag-new">Heatmap</span><span class="update-tag tag-new">Pro Mix</span><span class="update-tag tag-new">Blind Mode</span><span class="update-tag tag-new">Sudden Death</span><span class="update-tag tag-new">WPM Graph</span><span class="update-tag tag-new">Reaction</span><span class="update-tag tag-new">Rhythm</span></div></div>
+    <div class="update-item"><div class="update-dot"></div><div class="update-version">v1.4.0</div><div class="update-date">February 2026</div><div class="update-title">Speed Rush Overhaul & Lessons Redesign</div><div class="update-desc">Speed Rush now displays the word clearly on screen. Lessons redesigned with instructions and progress bar. Text overflow fixed.</div><div class="update-tags"><span class="update-tag tag-improve">Speed Rush</span><span class="update-tag tag-improve">Lessons</span><span class="update-tag tag-fix">Text Overflow</span></div></div>
+    <div class="update-item"><div class="update-dot"></div><div class="update-version">v1.3.0</div><div class="update-date">January 2026</div><div class="update-title">Games Mode Launch 🎮</div><div class="update-desc">Word Rain, Speed Rush and Precision Strike games added.</div><div class="update-tags"><span class="update-tag tag-new">Word Rain</span><span class="update-tag tag-new">Speed Rush</span><span class="update-tag tag-new">Precision Strike</span></div></div>
+    <div class="update-item"><div class="update-dot minor"></div><div class="update-version">v1.0.0</div><div class="update-date">November 2025</div><div class="update-title">TypeMaster Launch 🚀</div><div class="update-desc">Initial release with core typing test, 8 lessons, local stats and 7 languages.</div><div class="update-tags"><span class="update-tag tag-new">Launch</span></div></div>
+  </div>
+</div>
+
+<div class="page" id="page-about">
+  <div class="page-header"><h1>About <span class="hl">TypeMaster</span></h1><p> built for professionals, by a professional</p></div>
+  <div class="about-hero"><h2>Type faster. Work <span>smarter</span>.</h2><p>TypeMaster is a free, no-login typing platform built for office workers and professionals. Better typing leads to better productivity, less fatigue, and more focus on what actually matters.</p></div>
+  <div class="about-features">
+    <div class="about-feature"><div class="af-icon">⌨️</div><div class="af-title">Real Typing Tests</div><div class="af-desc">Time, word and Pro Mix modes with live WPM, accuracy and a real-time WPM graph.</div></div>
+    <div class="about-feature"><div class="af-icon">📖</div><div class="af-title">Structured Lessons</div><div class="af-desc">8 lessons from home row to professional email phrases.</div></div>
+    <div class="about-feature"><div class="af-icon">🎮</div><div class="af-title">Fun Games</div><div class="af-desc">Word Rain, Speed Rush and Precision Strike to build speed through play.</div></div>
+    <div class="about-feature"><div class="af-icon">🔥</div><div class="af-title">Keyboard Heatmap</div><div class="af-desc">Visual map showing exactly which keys you make the most errors on.</div></div>
+    <div class="about-feature"><div class="af-icon">💀</div><div class="af-title">Extreme Modes</div><div class="af-desc">Blind Mode, Sudden Death, Reaction Mode and Rhythm Mode for serious practice.</div></div>
+    <div class="about-feature"><div class="af-icon">🔒</div><div class="af-title">100% Private</div><div class="af-desc">No login, no signup. All data stays in your browser forever.</div></div>
+  </div>
+</div>
+
+<script>
+const QUOTES = [
+  {text:"The expert in anything was once a beginner.", attr:"Helen Hayes"},
+  {text:"Speed is a byproduct of accuracy. Master accuracy first.", attr:"TypeMaster"},
+  {text:"Your fingers are capable of things your mind hasn't imagined yet.", attr:"TypeMaster"},
+  {text:"Every keystroke is a step closer to mastery.", attr:"TypeMaster"},
+  {text:"Don't watch the keyboard. Trust your fingers.", attr:"TypeMaster"},
+  {text:"The difference between ordinary and extraordinary is practice.", attr:"Vladimir Horowitz"},
+  {text:"Slow is smooth. Smooth is fast.", attr:"Special Forces Motto"},
+  {text:"You don't rise to the level of your goals. You fall to the level of your systems.", attr:"James Clear"},
+  {text:"Repetition is the mother of skill.", attr:"Tony Robbins"},
+  {text:"Champions train when others rest.", attr:"TypeMaster"},
+  {text:"Your WPM today is higher than it was yesterday. Keep going.", attr:"TypeMaster"},
+  {text:"Pressure makes diamonds. Deadlines make fast typists.", attr:"TypeMaster"},
+  {text:"The keyboard is your instrument. Practice makes music.", attr:"TypeMaster"},
+  {text:"Every professional was once a person who decided to begin.", attr:"Unknown"},
+  {text:"Comfort zones are where speed goes to die.", attr:"TypeMaster"}
+];
+
+function randQuote() { return QUOTES[Math.floor(Math.random()*QUOTES.length)]; }
+function renderQuote(elId) {
+  const q = randQuote();
+  const el = document.getElementById(elId);
+  if (el) el.innerHTML = '"' + q.text + '" — <span>' + q.attr + '</span>';
+}
+
+const WORDS = {
+  english:["the","be","to","of","and","a","in","that","have","it","for","not","on","with","he","as","you","do","at","this","but","his","by","from","they","we","say","her","she","or","an","will","my","one","all","would","there","their","what","so","up","out","if","about","who","get","which","go","me","when","make","can","like","time","no","just","him","know","take","people","into","year","your","good","some","could","them","see","other","than","then","now","look","only","come","its","over","think","also","back","after","use","two","how","our","work","first","well","way","even","new","want","because","any","these","give","day","most","us","great","between","need","large","often","hand","high","place","hold","turn","seem","tell","next","few","start","never","here","office","email","report","meeting","project","document","schedule","deadline","budget","client","team","plan","review","update","send","draft","file","task","note","data","system","process","manage","create","build","write","read","type","format","print","save","open","close","find","check","confirm","submit","approve","follow","complete","attach","forward","reply","delete","copy","share","search","filter","sort","export","import","access","settings","account","dashboard","status","priority","pending","done"],
+  hindi:["aap","main","hum","tum","woh","yeh","kya","kaise","kab","kahan","kyun","nahin","haan","theek","accha","bahut","thoda","bada","chota","ghar","kaam","log","din","raat","khana","pani","desh","shahar","gaon","paisa","time","saal","mahina","hafte","aaj","kal","abhi","baad","pehle","sath","bina","liye","mera","tera","uska","hamara","tumhara","unka","karo","aao","jao","dekho","suno","bolo","likho","padho","khao","piyo","socho","samjho","batao"],
+  marathi:["mi","tu","aapan","to","ti","te","kay","kase","keva","kuthe","ka","nahi","ho","theek","chan","khup","thoda","motha","lahan","ghar","kaam","manus","divas","raat","jevan","pani","desh","shahar","gaon","paisa","vel","varsh","mahina","aathavda","aaj","udya","kal","aata","nantar","aadhi","baro","bhar","maza","tuzha","tyacha","amcha","tumcha","tyanche"],
+  french:["le","la","les","un","une","des","et","est","en","que","qui","pas","sur","avec","pour","par","dans","au","du","il","elle","nous","vous","ils","je","tu","mon","ma","mes","ton","ta","tes","son","sa","ses","notre","votre","leur","ce","cette","ces","mais","ou","donc","car","bonjour","merci","oui","non","comment","quand","pourquoi","aller","faire","avoir","être","venir","voir","savoir","pouvoir","parler","manger","boire","travailler","lire","écrire","bureau","réunion","projet","rapport","client","équipe","plan","travail"],
+  spanish:["el","la","los","las","un","una","y","es","en","que","no","a","se","lo","le","su","por","con","para","todo","pero","más","esto","como","muy","hay","ya","también","desde","donde","cuando","después","antes","aquí","hoy","ayer","mañana","trabajo","casa","tiempo","año","día","noche","gente","empresa","oficina","reunión","proyecto","informe","cliente","equipo","plan","hablar","hacer","tener","ser","estar","ir","ver","saber","poder","querer","comer","beber","escribir","leer","trabajar"],
+  code:["const","let","var","function","return","if","else","for","while","class","import","export","from","async","await","try","catch","new","this","null","true","false","undefined","console","log","push","pop","map","filter","reduce","forEach","length","toString","parseInt","document","window","element","event","addEventListener","querySelector","getElementById","fetch","then","Promise","resolve","reject","Array","Object","String","Number","Boolean","JSON","stringify","parse","Math","floor","ceil","round","random","Date","now","setTimeout","require","module","exports","default","extends","super","constructor","get","set","delete","typeof","instanceof","break","continue","switch","case","throw","Error"],
+  numbers:["1","2","3","4","5","6","7","8","9","0","10","20","30","40","50","100","200","500","1000","2026","123","456","789","1234","5678","9012","12","34","56","78","90","11","22","33","44","55","66","77","88","99","365","52","24","60","999","321","654","987","147","258","369"]
+};
+
+const PROMIX_EXTRAS = ["@","#","$","%","!","&","*","(",")","-","_","+","=","?","2026","100","50","25","@office","#task","$500","meeting@3pm","report_v2","budget-2026","ref:TM01","ph:9876","tax@15%","Q3!","v2.0","user_id","file.doc","pass#123","date:2026","cost$250","rate%5","note!urgent"];
+
+const LESSON_DATA = [
+  {title:"Home Row Keys",desc:"Master the foundation — ASDF JKL;",keys:["A","S","D","F","J","K","L",";"],instructions:"Place your <strong>left fingers on A S D F</strong> and <strong>right fingers on J K L ;</strong>. This is the home row — never move your hands away. Green = correct, Red = wrong.",text:"aaa sss ddd fff jjj kkk lll asd fjk adf jkl sad jak lad ask fad las dad add all fall shall flask salad flask lads"},
+  {title:"Top Row — QWERTY",desc:"Reach up to QWERTYUIOP from home row",keys:["Q","W","E","R","T","Y","U","I","O","P"],instructions:"Keep fingers on home row and <strong>reach up</strong> to type Q W E R T Y U I O P. Only move the finger that is needed.",text:"quit work every route type your unit input outer power quite tower router youth equip worthy pretty territory report update"},
+  {title:"Bottom Row — ZXCVBNM",desc:"Reach down to ZXCVBNM from home row",keys:["Z","X","C","V","B","N","M"],instructions:"Reach <strong>down from the home row</strong> to hit Z X C V B N M. Keep wrists flat — only the reaching finger should move.",text:"zinc exam come very back next move calm bank name zone verb bump numb mixed convince combine maximum vacuum vibrant"},
+  {title:"Capital Letters",desc:"Use Shift precisely for professional writing",keys:["Shift","Capitals"],instructions:"Use the <strong>opposite Shift key</strong> — left Shift for right-hand letters, right Shift for left-hand letters. Keeps typing fast and balanced.",text:"The Quick Brown Fox Jumps Over A Lazy Dog. Dear Sir Please Find Attached The Report. Best Regards The Manager. Invoice Due Friday."},
+  {title:"Numbers and Symbols",desc:"Numbers and symbols used in every office document",keys:["0-9","@","$","!"],instructions:"Reach <strong>up to the number row</strong>. Numbers appear in every invoice, email and report. Do not look at the keyboard.",text:"order 100 items at 25 each total 2500 invoice 1042 due in 30 days reference TM 2026 call 9876543210 at 10am on 5th March"},
+  {title:"Common Office Words",desc:"Words you type every single day at work",keys:["Office","Words"],instructions:"These are the <strong>most typed words in professional settings</strong>. Focus on smooth rhythm and zero errors — speed follows naturally.",text:"meeting schedule deadline project update report client email budget review team submit approve follow feedback complete attach forward reply confirm"},
+  {title:"Professional Email Phrases",desc:"Complete phrases from real business emails",keys:["Email","Phrases"],instructions:"These are <strong>full professional phrases</strong> from emails you type daily. Type them as smooth flowing text — accuracy over speed.",text:"please find attached kindly let me know looking forward to your response thank you for your time best regards as per our discussion please confirm receipt of this email"},
+  {title:"Speed Builder — Full Sentences",desc:"Put it all together at full speed",keys:["Full","Speed"],instructions:"Your <strong>final challenge</strong>. Full professional sentences combining everything you learned. Target 95%+ accuracy — the professional standard.",text:"The quarterly report has been submitted to the finance team for review. Please confirm receipt and let us know if any changes are required before the deadline on Friday afternoon. Thank you."}
+];
+
+const LANG_NAMES = {english:"English",hindi:"Hindi (Roman)",marathi:"Marathi (Roman)",french:"French",spanish:"Spanish",code:"Code Snippets",numbers:"Numbers"};
+
+let tst = {mode:'time',duration:30,wordCount:25,language:'english',fullText:'',errors:0,started:false,timer:null,timeLeft:30,correctChars:0,startTime:null,blind:false,sudden:false,rhythm:false,rhythmTimer:null,beatType:'drum',bpm:80,totalTyped:0};
+let lst = {active:false,lessonIdx:0,errors:0,startTime:null,timer:null};
+let gst = {active:false,type:null,score:0,lives:3,timer:null,fallingWords:[],animFrame:null,timeLeft:0};
+let rst = {active:false,score:0,round:0,misses:0,timer:null,currentWord:'',showing:false};
+let wpmHistory = [];
+let keyErrors = {};
+let audioCtx = null;
+
+function getAudioCtx() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  return audioCtx;
+}
+
+function playBeat(type) {
+  try {
+    const ctx = getAudioCtx();
+    const now = ctx.currentTime;
+    if (type === 'drum') {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.frequency.setValueAtTime(150, now);
+      osc.frequency.exponentialRampToValueAtTime(50, now + 0.1);
+      gain.gain.setValueAtTime(0.5, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+      osc.start(now); osc.stop(now + 0.15);
+    } else if (type === 'piano') {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(523, now);
+      gain.gain.setValueAtTime(0.3, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+      osc.start(now); osc.stop(now + 0.3);
+    } else if (type === 'electronic') {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.type = 'square';
+      osc.frequency.setValueAtTime(880, now);
+      gain.gain.setValueAtTime(0.15, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+      osc.start(now); osc.stop(now + 0.05);
+    }
+  } catch(e) {}
+}
+
+function startRhythmBeats() {
+  stopRhythmBeats();
+  const bpm = parseInt(document.getElementById('bpm-input').value) || 80;
+  const interval = 60000 / bpm;
+  playBeat(tst.beatType);
+  tst.rhythmTimer = setInterval(function(){ playBeat(tst.beatType); }, interval);
+}
+
+function stopRhythmBeats() {
+  if (tst.rhythmTimer) { clearInterval(tst.rhythmTimer); tst.rhythmTimer = null; }
+}
+
+function toggleBlind() {
+  tst.blind = !tst.blind;
+  document.getElementById('blind-badge').classList.toggle('on', tst.blind);
+  document.getElementById('typing-wrapper').classList.toggle('blind-mode', tst.blind);
+}
+
+function toggleSudden() {
+  tst.sudden = !tst.sudden;
+  document.getElementById('sudden-badge').classList.toggle('on', tst.sudden);
+  document.getElementById('sudden-bar').classList.toggle('show', tst.sudden);
+  document.getElementById('typing-wrapper').classList.toggle('sudden-mode', tst.sudden);
+  if (tst.sudden) document.getElementById('sudden-fill').style.width = '100%';
+}
+
+function toggleRhythm() {
+  tst.rhythm = !tst.rhythm;
+  document.getElementById('rhythm-badge').classList.toggle('on', tst.rhythm);
+  document.getElementById('rhythm-controls').classList.toggle('show', tst.rhythm);
+  if (!tst.rhythm) stopRhythmBeats();
+}
+
+function setBeat(type, el) {
+  tst.beatType = type;
+  document.querySelectorAll('.beat-btn').forEach(function(b){b.classList.remove('active');});
+  el.classList.add('active');
+}
+
+function showPage(name, el) {
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
+  document.querySelectorAll('.nav-links a').forEach(function(a){a.classList.remove('active');});
+  document.getElementById('page-'+name).classList.add('active');
+  if (el) el.classList.add('active');
+  if (name==='stats') renderStats();
+  if (name==='languages') renderLangPreview('english');
+  if (name==='lessons') { renderLessons(); renderQuote('lessons-quote'); }
+  if (name==='games') renderQuote('games-quote');
+  if (name==='heatmap') renderHeatmap();
+  document.getElementById('navLinks').classList.remove('open');
+}
+
+function toggleMobileNav() { document.getElementById('navLinks').classList.toggle('open'); }
+
+function randWord(lang) { const p=WORDS[lang]||WORDS.english; return p[Math.floor(Math.random()*p.length)]; }
+
+function buildProMixText(count) {
+  const engPool = WORDS.english;
+  const result = [];
+  for (let i=0;i<count;i++) {
+    const r = Math.random();
+    if (r < 0.55) result.push(engPool[Math.floor(Math.random()*engPool.length)]);
+    else if (r < 0.75) result.push(String(Math.floor(Math.random()*999)+1));
+    else result.push(PROMIX_EXTRAS[Math.floor(Math.random()*PROMIX_EXTRAS.length)]);
+  }
+  return result.join(' ');
+}
+
+function initTest() {
+  clearInterval(tst.timer);
+  stopRhythmBeats();
+  wpmHistory = [];
+  drawWpmGraph();
+  const count = tst.mode==='time'?250:tst.wordCount;
+  if (tst.mode==='promix') tst.fullText=buildProMixText(80);
+  else { let w=[]; for(let i=0;i<count;i++) w.push(randWord(tst.language)); tst.fullText=w.join(' '); }
+  tst.errors=0; tst.started=false; tst.timeLeft=tst.duration; tst.correctChars=0; tst.startTime=null; tst.totalTyped=0;
+  document.getElementById('typing-input').value='';
+  document.getElementById('live-wpm').textContent='0';
+  document.getElementById('live-acc').textContent='100%';
+  document.getElementById('live-errors').textContent='0';
+  document.getElementById('live-timer').textContent=tst.mode==='time'?tst.duration+'s':'--';
+  document.getElementById('live-timer').classList.remove('timer-warn');
+  if (tst.sudden) document.getElementById('sudden-fill').style.width='100%';
+  renderChars(tst.fullText,'',document.getElementById('text-display'));
+}
+
+function renderChars(text, typed, el) {
+  el.innerHTML = text.split('').map(function(ch,i){
+    let cls='';
+    if(i<typed.length) cls=typed[i]===ch?'correct':'wrong';
+    else if(i===typed.length) cls='current';
+    return '<span class="char '+cls+'">'+(ch===' '?'&nbsp;':ch)+'</span>';
+  }).join('');
+  const cur=el.querySelector('.current');
+  if(cur) cur.scrollIntoView({block:'nearest',behavior:'smooth'});
+}
+
+function focusInput() { document.getElementById('typing-input').focus(); }
+
+function setMode(mode, el) {
+  tst.mode=mode;
+  document.querySelectorAll('#mode-group .ctrl-btn').forEach(function(b){b.classList.remove('active');});
+  el.classList.add('active');
+  document.getElementById('time-group').style.display=(mode==='time')?'':'none';
+  document.getElementById('word-group').style.display=(mode==='words')?'':'none';
+  document.getElementById('wpm-graph-container').classList.toggle('show', mode==='time');
+  initTest();
+}
+
+function setDuration(d,el){tst.duration=d;document.querySelectorAll('#time-group .ctrl-btn').forEach(function(b){b.classList.remove('active');});el.classList.add('active');initTest();}
+function setWordCount(n,el){tst.wordCount=n;document.querySelectorAll('#word-group .ctrl-btn').forEach(function(b){b.classList.remove('active');});el.classList.add('active');initTest();}
+function setTestLanguage(lang){tst.language=lang;initTest();}
+function resetTest(){initTest();focusInput();}
+function calcWPM(chars,secs){return Math.round((chars/5)/(secs/60));}
+
+function drawWpmGraph() {
+  const canvas = document.getElementById('live-wpm-canvas');
+  if (!canvas) return;
+  canvas.width = canvas.offsetWidth || 600;
+  const ctx2 = canvas.getContext('2d');
+  ctx2.clearRect(0,0,canvas.width,canvas.height);
+  if (wpmHistory.length < 2) return;
+  const max = Math.max(...wpmHistory, 10);
+  const w = canvas.width, h = canvas.height;
+  ctx2.beginPath();
+  ctx2.strokeStyle = '#00e5ff';
+  ctx2.lineWidth = 2;
+  ctx2.shadowBlur = 8;
+  ctx2.shadowColor = '#00e5ff';
+  wpmHistory.forEach(function(v, i) {
+    const x = (i/(wpmHistory.length-1))*w;
+    const y = h - (v/max)*h*0.9 - 2;
+    i===0 ? ctx2.moveTo(x,y) : ctx2.lineTo(x,y);
+  });
+  ctx2.stroke();
+  ctx2.shadowBlur = 0;
+  ctx2.strokeStyle = 'rgba(0,229,255,0.15)';
+  ctx2.lineWidth = 1;
+  ctx2.beginPath();
+  const lastX = w, lastY = h-(wpmHistory[wpmHistory.length-1]/max)*h*0.9-2;
+  ctx2.moveTo(0,h); ctx2.lineTo(0,h-(wpmHistory[0]/max)*h*0.9-2);
+  wpmHistory.forEach(function(v,i){ ctx2.lineTo((i/(wpmHistory.length-1))*w, h-(v/max)*h*0.9-2); });
+  ctx2.lineTo(lastX,h); ctx2.closePath();
+  ctx2.fillStyle = 'rgba(0,229,255,0.06)'; ctx2.fill();
+}
+
+document.getElementById('typing-input').addEventListener('input', function() {
+  const val = this.value, text = tst.fullText;
+  if (!tst.started && val.length>0) {
+    tst.started=true; tst.startTime=Date.now();
+    if (tst.rhythm) startRhythmBeats();
+    if (tst.mode==='time') {
+      tst.timer = setInterval(function(){
+        tst.timeLeft--;
+        document.getElementById('live-timer').textContent=tst.timeLeft+'s';
+        if(tst.timeLeft<=5) document.getElementById('live-timer').classList.add('timer-warn');
+        const elapsed=tst.duration-tst.timeLeft;
+        if(elapsed>0){ const wpm=calcWPM(tst.correctChars,elapsed); document.getElementById('live-wpm').textContent=wpm; wpmHistory.push(wpm); drawWpmGraph(); }
+        if(tst.timeLeft<=0){clearInterval(tst.timer);stopRhythmBeats();endTest();}
+      },1000);
+    } else {
+      tst.timer = setInterval(function(){
+        const elapsed=Math.max(1,(Date.now()-tst.startTime)/1000);
+        const wpm=calcWPM(tst.correctChars,elapsed);
+        document.getElementById('live-wpm').textContent=wpm;
+        document.getElementById('live-timer').textContent=Math.floor(elapsed)+'s';
+        wpmHistory.push(wpm); drawWpmGraph();
+      },1000);
+    }
+  }
+  let correct=0, errors=0;
+  for(let i=0;i<val.length;i++){
+    if(i<text.length){
+      if(val[i]===text[i]) correct++;
+      else {
+        errors++;
+        const wrongKey = text[i].toLowerCase();
+        if(wrongKey.match(/[a-z0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/)) {
+          keyErrors[wrongKey] = (keyErrors[wrongKey]||0)+1;
+        }
+      }
+    }
+  }
+  tst.correctChars=correct; tst.errors=errors; tst.totalTyped=val.length;
+  if (tst.sudden && val.length>0) {
+    const acc = Math.round((correct/val.length)*100);
+    document.getElementById('sudden-fill').style.width=acc+'%';
+    if (val[val.length-1]!==text[val.length-1]) {
+      stopRhythmBeats();
+      clearInterval(tst.timer);
+      const wpmNow = calcWPM(correct, Math.max(1,(Date.now()-tst.startTime)/1000));
+      document.getElementById('res-wpm').textContent=wpmNow;
+      document.getElementById('res-acc').textContent=acc+'%';
+      document.getElementById('res-correct').textContent=Math.round(correct/5);
+      document.getElementById('res-errors').textContent=errors;
+      document.getElementById('results-quote').textContent='💀 Sudden Death! You survived '+val.length+' characters.';
+      document.getElementById('results-overlay').classList.add('show');
+      saveTestResult({wpm:wpmNow,acc,errors,mode:'sudden',lang:tst.language,date:new Date().toLocaleDateString()});
+      return;
+    }
+  }
+  renderChars(text,val,document.getElementById('text-display'));
+  const acc2=val.length===0?100:Math.round((correct/val.length)*100);
+  document.getElementById('live-acc').textContent=acc2+'%';
+  document.getElementById('live-errors').textContent=errors;
+  if((tst.mode==='words'||tst.mode==='promix')&&val.length>=text.length){clearInterval(tst.timer);stopRhythmBeats();endTest();}
+});
+
+document.addEventListener('keydown', function(e){
+  if(e.key==='Enter'){
+    if(document.getElementById('results-overlay').classList.contains('show')){closeResults();return;}
+    if(document.getElementById('reaction-overlay').classList.contains('show')) return;
+    if(document.getElementById('page-test').classList.contains('active')){resetTest();focusInput();}
+  }
+  if(e.key==='Escape'){
+    if(document.getElementById('lesson-modal').classList.contains('show')){closeLessonModal();return;}
+    if(document.getElementById('reaction-overlay').classList.contains('show')){stopReaction();return;}
+    if(tst.blind){tst.blind=false;document.getElementById('blind-badge').classList.remove('on');document.getElementById('typing-wrapper').classList.remove('blind-mode');}
+    if(tst.sudden){tst.sudden=false;document.getElementById('sudden-badge').classList.remove('on');document.getElementById('sudden-bar').classList.remove('show');document.getElementById('typing-wrapper').classList.remove('sudden-mode');}
+    if(tst.rhythm){tst.rhythm=false;document.getElementById('rhythm-badge').classList.remove('on');document.getElementById('rhythm-controls').classList.remove('show');stopRhythmBeats();}
+  }
+});
+
+document.addEventListener('keypress', function(){
+  if(document.getElementById('page-test').classList.contains('active')&&!document.getElementById('results-overlay').classList.contains('show')&&!document.getElementById('reaction-overlay').classList.contains('show')&&document.activeElement!==document.getElementById('typing-input')) focusInput();
+});
+
+function endTest() {
+  clearInterval(tst.timer); stopRhythmBeats();
+  const elapsed=tst.mode==='time'?tst.duration:Math.max(1,(Date.now()-tst.startTime)/1000);
+  const wpm=calcWPM(tst.correctChars,elapsed);
+  const typed=document.getElementById('typing-input').value;
+  const acc=typed.length===0?100:Math.round((tst.correctChars/typed.length)*100);
+  document.getElementById('res-wpm').textContent=wpm;
+  document.getElementById('res-acc').textContent=acc+'%';
+  document.getElementById('res-correct').textContent=Math.round(tst.correctChars/5);
+  document.getElementById('res-errors').textContent=tst.errors;
+  const q=randQuote();
+  document.getElementById('results-quote').textContent='"'+q.text+'" — '+q.attr;
+  document.getElementById('results-overlay').classList.add('show');
+  saveTestResult({wpm,acc,errors:tst.errors,mode:tst.mode,lang:tst.language,date:new Date().toLocaleDateString()});
+  localStorage.setItem('tm_key_errors', JSON.stringify(keyErrors));
+}
+
+function closeResults(){document.getElementById('results-overlay').classList.remove('show');resetTest();focusInput();}
+
+function startReactionMode() {
+  rst.active=true; rst.score=0; rst.round=0; rst.misses=0;
+  document.getElementById('reaction-score').textContent='0';
+  document.getElementById('reaction-round').textContent='0';
+  document.getElementById('reaction-misses').textContent='0';
+  document.getElementById('reaction-input').value='';
+  document.getElementById('reaction-overlay').classList.add('show');
+  nextReactionWord();
+  document.getElementById('reaction-input').focus();
+}
+
+function nextReactionWord() {
+  const pool = WORDS.english.filter(function(w){return w.length>=3&&w.length<=7;});
+  rst.currentWord = pool[Math.floor(Math.random()*pool.length)];
+  rst.showing = true;
+  rst.round++;
+  document.getElementById('reaction-round').textContent=rst.round;
+  document.getElementById('reaction-word').textContent=rst.currentWord;
+  document.getElementById('reaction-word').classList.remove('hidden');
+  document.getElementById('reaction-hint').textContent='Memorise it — disappears in 1 second!';
+  document.getElementById('reaction-input').value='';
+  if(rst.timer) clearTimeout(rst.timer);
+  rst.timer=setTimeout(function(){
+    rst.showing=false;
+    document.getElementById('reaction-word').classList.add('hidden');
+    document.getElementById('reaction-hint').textContent='Now type the word from memory!';
+  }, 1000);
+}
+
+function stopReaction() {
+  rst.active=false;
+  if(rst.timer) clearTimeout(rst.timer);
+  document.getElementById('reaction-overlay').classList.remove('show');
+}
+
+document.getElementById('reaction-input').addEventListener('keydown', function(e){
+  if(!rst.active) return;
+  if(e.key==='Enter'||e.key===' '){
+    e.preventDefault();
+    const val=this.value.trim().toLowerCase();
+    if(val===rst.currentWord.toLowerCase()){
+      rst.score+=rst.showing?15:10;
+      document.getElementById('reaction-score').textContent=rst.score;
+    } else {
+      rst.misses++;
+      document.getElementById('reaction-misses').textContent=rst.misses;
+    }
+    nextReactionWord();
+  }
+});
+
+function getStats(){try{return JSON.parse(localStorage.getItem('tm_stats')||'[]');}catch{return [];}}
+function saveTestResult(r){const s=getStats();s.unshift(r);if(s.length>100)s.pop();localStorage.setItem('tm_stats',JSON.stringify(s));}
+
+function renderStats() {
+  const stats=getStats(), ov=document.getElementById('stats-overview');
+  if(stats.length===0){ov.innerHTML='<div class="no-stats" style="grid-column:1/-1">No tests yet. Go to the Test page and start typing!</div>';document.getElementById('stats-history').innerHTML='';document.getElementById('wpm-chart').innerHTML='<div style="color:var(--text3);font-family:monospace;font-size:0.85rem;margin:auto">No data yet</div>';return;}
+  const best=Math.max(...stats.map(function(s){return s.wpm;}));
+  const avg=Math.round(stats.reduce(function(a,b){return a+b.wpm;},0)/stats.length);
+  const acc=Math.round(stats.reduce(function(a,b){return a+b.acc;},0)/stats.length);
+  ov.innerHTML='<div class="stat-card"><div class="sc-icon">🏆</div><div class="sc-value">'+best+'</div><div class="sc-label">Best WPM</div></div><div class="stat-card"><div class="sc-icon">📊</div><div class="sc-value">'+avg+'</div><div class="sc-label">Avg WPM</div></div><div class="stat-card"><div class="sc-icon">🎯</div><div class="sc-value">'+acc+'%</div><div class="sc-label">Avg Accuracy</div></div><div class="stat-card"><div class="sc-icon">⌨️</div><div class="sc-value">'+stats.length+'</div><div class="sc-label">Tests Taken</div></div>';
+  const cd=stats.slice(0,20).reverse();
+  const mx=Math.max(...cd.map(function(s){return s.wpm;}),1);
+  document.getElementById('wpm-chart').innerHTML=cd.map(function(s){return '<div class="chart-bar" style="height:'+Math.max(4,(s.wpm/mx)*100)+'%" title="'+s.wpm+' WPM"></div>';}).join('');
+  document.getElementById('stats-history').innerHTML='<table class="history-table"><thead><tr><th>Date</th><th>WPM</th><th>Accuracy</th><th>Errors</th><th>Mode</th><th>Language</th></tr></thead><tbody>'+stats.slice(0,20).map(function(s){return '<tr><td>'+s.date+'</td><td class="wpm">'+s.wpm+'</td><td class="'+(s.acc>=95?'acc-good':'acc-bad')+'">'+s.acc+'%</td><td>'+s.errors+'</td><td>'+s.mode+'</td><td>'+(s.lang||'english')+'</td></tr>';}).join('')+'</tbody></table><div style="margin-top:1rem"><button class="clear-btn" onclick="clearStats()">🗑 Clear All Stats</button></div>';
+}
+
+function clearStats(){if(confirm('Clear all stats? Cannot be undone.')){localStorage.removeItem('tm_stats');localStorage.removeItem('tm_key_errors');keyErrors={};renderStats();}}
+
+function renderHeatmap() {
+  try { keyErrors = JSON.parse(localStorage.getItem('tm_key_errors')||'{}'); } catch { keyErrors={}; }
+  const rows = [
+    ['`','1','2','3','4','5','6','7','8','9','0','-','='],
+    ['q','w','e','r','t','y','u','i','o','p','[',']'],
+    ['a','s','d','f','g','h','j','k','l',';',"'"],
+    ['z','x','c','v','b','n','m',',','.','/'],
+    [' ']
+  ];
+  const maxErr = Math.max(...Object.values(keyErrors),1);
+  const hasData = Object.keys(keyErrors).length > 0;
+  if (!hasData) { document.getElementById('heatmap-content').innerHTML='<div class="heatmap-no-data">Complete some typing tests first — the heatmap will show your error patterns here.</div>'; document.getElementById('weak-keys-list').innerHTML='<div class="heatmap-no-data">No data yet.</div>'; return; }
+  let html='<div class="keyboard">';
+  rows.forEach(function(row){
+    html+='<div class="kb-row">';
+    row.forEach(function(k){
+      const count=keyErrors[k]||0;
+      const heat=count===0?0:count<=(maxErr*0.1)?1:count<=(maxErr*0.3)?2:count<=(maxErr*0.6)?3:count<=(maxErr*0.85)?4:5;
+      const cls=k===' '?'kb-key widest':k==='`'||k==='-'||k==='='||k==='['||k===']'||k==="'"||k===','||k==='.'||k==='/'?'kb-key wide':'kb-key';
+      const label=k===' '?'SPACE':k;
+      html+='<div class="'+cls+'"'+(heat>0?' data-heat="'+heat+'"':'')+(count>0?' title="'+count+' errors"':'')+'>'+(k===' '?'<span style="font-size:0.6rem">SPACE</span>':k.toUpperCase())+'</div>';
+    });
+    html+='</div>';
+  });
+  html+='</div>';
+  document.getElementById('heatmap-content').innerHTML=html;
+  const sorted=Object.entries(keyErrors).sort(function(a,b){return b[1]-a[1];}).slice(0,8);
+  if(sorted.length===0){document.getElementById('weak-keys-list').innerHTML='<div class="heatmap-no-data">No errors recorded yet!</div>';return;}
+  let whtml='<div style="display:flex;gap:0.8rem;flex-wrap:wrap;">';
+  sorted.forEach(function(entry){
+    const pct=Math.round((entry[1]/maxErr)*100);
+    whtml+='<div style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:0.8rem 1.2rem;min-width:80px;text-align:center;"><div style="font-family:JetBrains Mono,monospace;font-size:1.4rem;font-weight:700;color:var(--accent2);">'+entry[0].toUpperCase()+'</div><div style="font-size:0.75rem;color:var(--text2);font-family:JetBrains Mono,monospace;margin-top:2px;">'+entry[1]+' errors</div><div style="height:3px;background:var(--border);border-radius:2px;margin-top:6px;"><div style="height:100%;width:'+pct+'%;background:var(--wrong);border-radius:2px;"></div></div></div>';
+  });
+  whtml+='</div>';
+  document.getElementById('weak-keys-list').innerHTML=whtml;
+}
+
+function renderLessons(){
+  const done=JSON.parse(localStorage.getItem('tm_lessons_done')||'[]');
+  document.getElementById('lessons-grid').innerHTML=LESSON_DATA.map(function(l,i){
+    const isDone=done.includes(i);
+    return '<div class="lesson-card '+(isDone?'completed':'')+'" onclick="openLesson('+i+')">'+(isDone?'<span class="lesson-badge badge-done">✓ Done</span>':'<span class="lesson-badge badge-new">Start</span>')+'<div class="lesson-num">Lesson '+(i+1)+' of '+LESSON_DATA.length+'</div><div class="lesson-title">'+l.title+'</div><div class="lesson-desc">'+l.desc+'</div><div class="lesson-keys">'+l.keys.map(function(k){return '<span class="key-tag">'+k+'</span>';}).join('')+'</div></div>';
+  }).join('');
+}
+
+function openLesson(idx){
+  const l=LESSON_DATA[idx]; lst.lessonIdx=idx; lst.errors=0; lst.startTime=null; lst.active=false; clearInterval(lst.timer);
+  document.getElementById('modal-lesson-num').textContent='LESSON '+(idx+1)+' OF '+LESSON_DATA.length;
+  document.getElementById('modal-lesson-title').textContent=l.title;
+  document.getElementById('lesson-instructions').innerHTML=l.instructions;
+  document.getElementById('lesson-wpm').textContent='0';
+  document.getElementById('lesson-acc').textContent='100%';
+  document.getElementById('lesson-progress').textContent='0%';
+  document.getElementById('lesson-progress-fill').style.width='0%';
+  document.getElementById('lesson-input').value='';
+  renderChars(l.text,'',document.getElementById('lesson-text-display'));
+  document.getElementById('lesson-modal').classList.add('show');
+  setTimeout(function(){document.getElementById('lesson-input').focus();},120);
+}
+
+function closeLessonModal(){clearInterval(lst.timer);lst.active=false;document.getElementById('lesson-modal').classList.remove('show');}
+function focusLessonInput(){document.getElementById('lesson-input').focus();}
+
+document.getElementById('lesson-input').addEventListener('input',function(){
+  const l=LESSON_DATA[lst.lessonIdx], text=l.text, val=this.value;
+  if(!lst.active&&val.length>0){lst.active=true;lst.startTime=Date.now();lst.timer=setInterval(function(){const elapsed=Math.max(1,(Date.now()-lst.startTime)/1000);const v=document.getElementById('lesson-input').value;let c=0;for(let i=0;i<v.length;i++)if(i<text.length&&v[i]===text[i])c++;document.getElementById('lesson-wpm').textContent=calcWPM(c,elapsed);},500);}
+  let correct=0,errors=0;
+  for(let i=0;i<val.length;i++){if(i<text.length){if(val[i]===text[i])correct++;else errors++;}}
+  const acc=val.length===0?100:Math.round((correct/val.length)*100);
+  const prog=Math.min(100,Math.round((val.length/text.length)*100));
+  document.getElementById('lesson-acc').textContent=acc+'%';
+  document.getElementById('lesson-progress').textContent=prog+'%';
+  document.getElementById('lesson-progress-fill').style.width=prog+'%';
+  renderChars(text,val,document.getElementById('lesson-text-display'));
+  if(val.length>=text.length){
+    clearInterval(lst.timer);lst.active=false;
+    const done=JSON.parse(localStorage.getItem('tm_lessons_done')||'[]');
+    if(!done.includes(lst.lessonIdx)){done.push(lst.lessonIdx);localStorage.setItem('tm_lessons_done',JSON.stringify(done));}
+    const next=lst.lessonIdx+1;
+    const msg=next<LESSON_DATA.length?'Lesson '+(lst.lessonIdx+1)+' Complete!\nAccuracy: '+acc+'%\nWPM: '+document.getElementById('lesson-wpm').textContent+'\n\nContinue to Lesson '+(next+1)+'?':'All 8 Lessons Complete!\nAccuracy: '+acc+'%\nYou are a TypeMaster!';
+    setTimeout(function(){if(confirm(msg)&&next<LESSON_DATA.length){closeLessonModal();renderLessons();setTimeout(function(){openLesson(next);},200);}else{closeLessonModal();renderLessons();}},200);
+  }
+});
+
+function startGame(type){
+  gst.active=true;gst.type=type;gst.score=0;gst.lives=3;gst.fallingWords=[];
+  if(gst.animFrame)cancelAnimationFrame(gst.animFrame);clearInterval(gst.timer);
+  document.getElementById('game-score').textContent='0';
+  document.getElementById('game-area').classList.add('show');
+  document.getElementById('games-grid').style.display='none';
+  document.getElementById('game-input').value='';
+  document.getElementById('game-input').onkeydown=null;document.getElementById('game-input').oninput=null;
+  document.getElementById('falling-canvas').innerHTML='';document.getElementById('falling-canvas').style.display='none';
+  document.getElementById('game-word-display').classList.remove('show');
+  if(type==='falling'){document.getElementById('game-stat2-label').textContent='Lives';document.getElementById('game-stat2').textContent='❤️❤️❤️';document.getElementById('game-timer').textContent='∞';document.getElementById('falling-canvas').style.display='block';document.getElementById('game-input').placeholder='Type the falling word...';startFallingGame();}
+  else if(type==='speedrush'){document.getElementById('game-stat2-label').textContent='Words';document.getElementById('game-stat2').textContent='0';gst.timeLeft=30;document.getElementById('game-timer').textContent='30s';document.getElementById('game-word-display').classList.add('show');document.getElementById('game-input').placeholder='Type the word above then press Space or Enter...';startSpeedRush();}
+  else if(type==='accuracy'){document.getElementById('game-stat2-label').textContent='Streak';document.getElementById('game-stat2').textContent='0';document.getElementById('game-timer').textContent='∞';document.getElementById('game-word-display').classList.add('show');document.getElementById('game-input').placeholder='Type perfectly then press Space or Enter...';startAccuracyGame();}
+  document.getElementById('game-input').focus();
+}
+
+function stopGame(){gst.active=false;if(gst.animFrame)cancelAnimationFrame(gst.animFrame);clearInterval(gst.timer);document.getElementById('game-area').classList.remove('show');document.getElementById('games-grid').style.display='grid';document.getElementById('falling-canvas').innerHTML='';document.getElementById('game-input').onkeydown=null;document.getElementById('game-input').oninput=null;}
+
+function startFallingGame(){
+  const pool=WORDS.english.filter(function(w){return w.length>=3&&w.length<=8;});
+  const canvas=document.getElementById('falling-canvas');
+  let speed=0.3,spawnMs=2200,lastTs=0;
+  function spawnWord(){const word=pool[Math.floor(Math.random()*pool.length)];const left=3+Math.random()*82;const el=document.createElement('div');el.className='falling-word';el.textContent=word;el.style.left=left+'%';el.style.top='0px';canvas.appendChild(el);gst.fallingWords.push({el,word,top:0,typed:false,missed:false});}
+  function loop(ts){
+    if(!gst.active||gst.type!=='falling')return;
+    if(ts-lastTs>spawnMs){spawnWord();lastTs=ts;spawnMs=Math.max(700,spawnMs-40);speed=Math.min(1.8,speed+0.015);}
+    const h=canvas.offsetHeight;let over=false;
+    gst.fallingWords.forEach(function(fw){if(fw.typed||fw.missed)return;fw.top+=speed;fw.el.style.top=fw.top+'px';if(fw.top+50>=h){fw.missed=true;fw.el.classList.add('missed');setTimeout(function(){if(fw.el.parentNode)fw.el.remove();},400);gst.lives--;const hearts=['💀','❤️','❤️❤️','❤️❤️❤️'];document.getElementById('game-stat2').textContent=hearts[Math.max(0,gst.lives)];if(gst.lives<=0)over=true;}});
+    gst.fallingWords=gst.fallingWords.filter(function(fw){return fw.el.parentNode&&!fw.missed;});
+    if(over){cancelAnimationFrame(gst.animFrame);setTimeout(function(){alert('Game Over! Score: '+gst.score);stopGame();},100);return;}
+    gst.animFrame=requestAnimationFrame(loop);
+  }
+  gst.animFrame=requestAnimationFrame(loop);
+  document.getElementById('game-input').oninput=function(){const val=this.value.trim().toLowerCase();const found=gst.fallingWords.find(function(fw){return !fw.typed&&!fw.missed&&fw.word.toLowerCase()===val;});if(found){found.typed=true;found.el.classList.add('typed');setTimeout(function(){if(found.el.parentNode)found.el.remove();},300);gst.score+=found.word.length*2;document.getElementById('game-score').textContent=gst.score;this.value='';}};
+}
+
+function startSpeedRush(){
+  const pool=WORDS.english.filter(function(w){return w.length>=3&&w.length<=7;});
+  let wordCount=0;
+  function showNext(){const w=pool[Math.floor(Math.random()*pool.length)];document.getElementById('game-current-word').textContent=w;document.getElementById('game-word-hint').textContent='Type this word then press Space or Enter';return w;}
+  let cur=showNext();
+  gst.timer=setInterval(function(){gst.timeLeft--;document.getElementById('game-timer').textContent=gst.timeLeft+'s';if(gst.timeLeft<=0){clearInterval(gst.timer);setTimeout(function(){alert("Time's Up!\nWords: "+wordCount+"\nScore: "+gst.score);stopGame();},100);}},1000);
+  document.getElementById('game-input').onkeydown=function(e){if(e.key===' '||e.key==='Enter'){e.preventDefault();const val=this.value.trim().toLowerCase();if(val===cur.toLowerCase()){wordCount++;gst.score+=cur.length*3;document.getElementById('game-score').textContent=gst.score;document.getElementById('game-stat2').textContent=wordCount;this.classList.add('correct-flash');setTimeout(function(){document.getElementById('game-input').classList.remove('correct-flash');},200);}else{this.classList.add('wrong-flash');setTimeout(function(){document.getElementById('game-input').classList.remove('wrong-flash');},200);}this.value='';cur=showNext();}};
+}
+
+function startAccuracyGame(){
+  const pool=WORDS.english.filter(function(w){return w.length>=4&&w.length<=8;});
+  let streak=0;
+  function showNext(){const w=pool[Math.floor(Math.random()*pool.length)];document.getElementById('game-current-word').textContent=w;document.getElementById('game-word-hint').textContent='Type perfectly then press Space or Enter — one mistake resets streak!';return w;}
+  let cur=showNext();
+  document.getElementById('game-input').onkeydown=function(e){if(e.key===' '||e.key==='Enter'){e.preventDefault();const val=this.value.trim().toLowerCase();if(val===cur.toLowerCase()){streak++;gst.score+=streak*10;document.getElementById('game-score').textContent=gst.score;document.getElementById('game-stat2').textContent=streak;this.classList.add('correct-flash');setTimeout(function(){document.getElementById('game-input').classList.remove('correct-flash');},200);}else{streak=0;document.getElementById('game-stat2').textContent='0';this.classList.add('wrong-flash');setTimeout(function(){document.getElementById('game-input').classList.remove('wrong-flash');},200);}this.value='';cur=showNext();}};
+}
+
+function selectLanguage(lang,el){document.querySelectorAll('.lang-card').forEach(function(c){c.classList.remove('active-lang');});el.classList.add('active-lang');renderLangPreview(lang);const sel=document.getElementById('test-lang-select');for(let o of sel.options)if(o.value===lang){sel.value=lang;break;}tst.language=lang;}
+function renderLangPreview(lang){const pool=WORDS[lang]||WORDS.english;document.getElementById('lang-preview-name').textContent=LANG_NAMES[lang]||lang;document.getElementById('lang-preview-text').textContent=Array.from({length:20},function(){return pool[Math.floor(Math.random()*pool.length)];}).join(' ');}
+
+function initQuotes(){
+  renderQuote('quote-text');
+  try{keyErrors=JSON.parse(localStorage.getItem('tm_key_errors')||'{}');}catch{keyErrors={};}
+}
+
+initTest();
+renderLessons();
+renderLangPreview('english');
+initQuotes();
+</script>
+</body>
+</html>
