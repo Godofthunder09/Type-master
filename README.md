@@ -48,7 +48,7 @@ feature-rich typing practice.
 No installation needed.
 
 1. Clone the repository
-   git clone https://github.com/Godofthunder09/typemaster.git
+   git clone https://github.com/Godofthunder09/type-master.git
 
 2. Open index.html in any browser
 
