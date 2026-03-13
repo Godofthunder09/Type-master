@@ -75,6 +75,18 @@ typemaster/
 | v1.0.0 | November 2025 | Initial launch |
 
 ---
+📸 Screenshots
+## 📸 Screenshots
+
+![Typing Test](https://github.com/user-attachments/assets/8a14faba-f830-4914-8aff-72d67d683958)
+
+![Keyboard Heatmap](https://github.com/user-attachments/assets/cd20358c-59d2-4144-adbb-3969c0bedf7e)
+
+![Word Rain Game](https://github.com/user-attachments/assets/e2b9092e-fb42-4dd1-98d3-0a322d9262f1)
+
+![Stats Page](https://github.com/user-attachments/assets/feba0248-ed8a-45e5-91f1-1b4288ed405e)
+
+---
 
 ## 👨‍💻 Author
 
