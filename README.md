@@ -75,7 +75,6 @@ typemaster/
 | v1.0.0 | November 2025 | Initial launch |
 
 ---
-📸 Screenshots
 ## 📸 Screenshots
 
 ![Typing Test](https://github.com/user-attachments/assets/8a14faba-f830-4914-8aff-72d67d683958)
